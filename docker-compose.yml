@@ -44,3 +44,22 @@ services:
     networks:
       - ac-network
     restart: unless-stopped
+  assetto-corsa-server3:
+    image: germanrcuriel/assetto-corsa-server
+    platform: linux/amd64
+    container_name: assetto-corsa-server3
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - STEAM_USER=${STEAM_USER}
+      - STEAM_PASSWORD=${STEAM_PASSWORD}
+    ports:
+      - "8083:8083"
+      - "9602:9602"
+      - "9602:9602/udp"
+    volumes:
+      - ./ac3:/steamapps/assetto/cfg
+    networks:
+      - ac-network
+    restart: unless-stopped
