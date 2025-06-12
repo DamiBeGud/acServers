@@ -2,96 +2,45 @@ version: '3.8'
 
 networks:
   ac-network:
-    external: false
+    driver: bridge
 
 services:
-  traefik:
-    image: traefik:v3.0
-    container_name: traefik
-    command:
-      - --api.insecure=true
-      - --providers.docker=true
-      - --entrypoints.web.address=:8081
-      - --entrypoints.acgame.address=:9600/tcp
-      - --entrypoints.acudp.address=:9600/udp
-      - --log.level=DEBUG
+  assetto-corsa-server1:
+    image: germanrcuriel/assetto-corsa-server
+    platform: linux/amd64
+    container_name: assetto-corsa-server1
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - STEAM_USER=DamiBeGudAC
+      - STEAM_PASSWORD=123++qwse
     ports:
-      - "8081:8081"         # HTTP reverse proxy
-      - "9600:9600/tcp"     # TCP for game server
-      - "9600:9600/udp"     # UDP for game server
-      - "8080:8080"         # Optional: Traefik dashboard
+      - "8081:8081"
+      - "9600:9600"
+      - "9600:9600/udp"
+    volumes:
+      - ./ac1:/steamapps/assetto/cfg
     networks:
       - ac-network
     restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
 
-  assetto-corsa-server1:
+  assetto-corsa-server2:
     image: germanrcuriel/assetto-corsa-server
-    container_name: assetto-corsa-server1
     platform: linux/amd64
+    container_name: assetto-corsa-server2
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
       - STEAM_USER=${STEAM_USER}
       - STEAM_PASSWORD=${STEAM_PASSWORD}
+    ports:
+      - "8082:8081"
+      - "9601:9600"
+      - "9601:9600/udp"
     volumes:
-      - ./ac1:/steamapps/assetto/cfg
+      - ./ac2:/steamapps/assetto/cfg
     networks:
       - ac-network
-    labels:
-      - "traefik.enable=true"
-
-      # HTTP (web)
-      - "traefik.http.routers.server1.rule=Host(`ac1.damibegud.cloud`)"
-      - "traefik.http.routers.server1.entrypoints=web"
-      - "traefik.http.services.server1.loadbalancer.server.port=8081"
-
-      # TCP
-      - "traefik.tcp.routers.server1tcp.rule=HostSNI(`ac1.damibegud.cloud`)"
-      - "traefik.tcp.routers.server1tcp.entrypoints=acgame"
-      - "traefik.tcp.routers.server1tcp.service=server1tcp"
-      - "traefik.tcp.services.server1tcp.loadbalancer.server.port=9600"
-
-      # UDP
-      - "traefik.udp.routers.server1udp.entrypoints=acudp"
-      - "traefik.udp.routers.server1udp.service=server1udp"
-      - "traefik.udp.services.server1udp.loadbalancer.server.port=9600"
-
     restart: unless-stopped
-
-  # assetto-corsa-server2:
-  #   image: germanrcuriel/assetto-corsa-server
-  #   container_name: assetto-corsa-server2
-  #   platform: linux/amd64
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Etc/UTC
-  #     - STEAM_USER=
-  #     - STEAM_PASSWORD=
-  #   volumes:
-  #     - ./ac2:/steamapps/assetto/cfg
-  #   networks:
-  #     - ac-network
-  #   labels:
-  #     - "traefik.enable=true"
-
-  #     # HTTP (web)
-  #     - "traefik.http.routers.server2.rule=Host(`server2.example.com`)"
-  #     - "traefik.http.routers.server2.entrypoints=web"
-  #     - "traefik.http.services.server2.loadbalancer.server.port=8081"
-
-  #     # TCP
-  #     - "traefik.tcp.routers.server2tcp.rule=HostSNI(`server2.example.com`)"
-  #     - "traefik.tcp.routers.server2tcp.entrypoints=acgame"
-  #     - "traefik.tcp.routers.server2tcp.service=server2tcp"
-  #     - "traefik.tcp.services.server2tcp.loadbalancer.server.port=9600"
-
-  #     # UDP
-  #     - "traefik.udp.routers.server2udp.entrypoints=acudp"
-  #     - "traefik.udp.routers.server2udp.service=server2udp"
-  #     - "traefik.udp.services.server2udp.loadbalancer.server.port=9600"
-
-  #   restart: unless-stopped
