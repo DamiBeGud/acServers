@@ -36,9 +36,9 @@ services:
       - STEAM_USER=${STEAM_USER}
       - STEAM_PASSWORD=${STEAM_PASSWORD}
     ports:
-      - "8082:8081"
-      - "9601:9600"
-      - "9601:9600/udp"
+      - "8082:8082"
+      - "9601:9601"
+      - "9601:9601/udp"
     volumes:
       - ./ac2:/steamapps/assetto/cfg
     networks:
