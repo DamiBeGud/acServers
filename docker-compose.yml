@@ -13,8 +13,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - STEAM_USER=DamiBeGudAC
-      - STEAM_PASSWORD=123++qwse
+      - STEAM_USER=${STEAM_USER}
+      - STEAM_PASSWORD=${STEAM_PASSWORD}
     ports:
       - "8081:8081"
       - "9600:9600"
