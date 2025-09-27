@@ -85,7 +85,7 @@ services:
   assetto-corsa-server5:
     image: germanrcuriel/assetto-corsa-server
     platform: linux/amd64
-    container_name: assetto-corsa-server4
+    container_name: assetto-corsa-server5
     environment:
       - PUID=1000
       - PGID=1000
@@ -97,7 +97,7 @@ services:
       - "9603:9605"
       - "9603:9605/udp"
     volumes:
-      - ./ac4:/steamapps/assetto/cfg
+      - ./ac5:/steamapps/assetto/cfg
     networks:
       - ac-network
     restart: unless-stopped
